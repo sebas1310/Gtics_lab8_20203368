@@ -20,8 +20,8 @@ public class TipoTicketEvento {
     @Column(name = "cantidad")
     private String cantidad;
 
-    @OneToOne
-    @JoinColumn(name = "id_evento")
+    @ManyToOne
+    @JoinColumn(name = "idEvento")
     private Evento evento;
 
 }

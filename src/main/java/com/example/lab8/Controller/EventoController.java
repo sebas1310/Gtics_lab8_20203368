@@ -1,7 +1,10 @@
 package com.example.lab8.Controller;
 
 import com.example.lab8.Entity.Evento;
+import com.example.lab8.Entity.Ticket;
 import com.example.lab8.Repository.EventoRepository;
+import com.example.lab8.Repository.TicketRepository;
+import com.example.lab8.Repository.TipoTicketEventoRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +13,27 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/evento")
+//@RequestMapping(value = "/evento")
 public class EventoController {
     final EventoRepository eventoRepository;
 
-    public EventoController(EventoRepository eventoRepository) {
+    final TicketRepository ticketRepository;
+    public EventoController(EventoRepository eventoRepository, TicketRepository ticketRepository, TipoTicketEventoRepository tipoTicketEventoRepository) {
         this.eventoRepository = eventoRepository;
+        this.ticketRepository = ticketRepository;
+        this.tipoTicketEventoRepository = tipoTicketEventoRepository;
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "/evento")
     public List<Evento> listarEvento(){
         return eventoRepository.findAll();
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/evento/{id}")
     public ResponseEntity<HashMap<String,Object>> obtenerEventoPorId(
             @PathVariable("id") String idStr) {
 
@@ -52,8 +57,15 @@ public class EventoController {
         return new ResponseEntity<>(responseJson, HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/eventoConTipoDeTicket/{id}")
+    public ResponseEntity<HashMap<String,Object>> listarEvento(@PathVariable("id") String idStr){
+        HashMap<String,Object> responseJson = new HashMap<>();
+        Integer id = Integer.parseInt(idStr);
+        responseJson.put("eventoConTipoDeTicket",ticketRepository.tipoTicketEvento(id));
+        return ResponseEntity.ok(responseJson);
+    }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "/evento")
     public ResponseEntity<HashMap<String,Object>> crearArea(@RequestBody Evento evento,@RequestParam(value = "fetchId", required = false) boolean fetchId){
         HashMap<String, Object> responseMap = new HashMap<>();
         if(evento!=null){
@@ -73,6 +85,12 @@ public class EventoController {
         return ResponseEntity.badRequest().body(responseMap);
     }
 
+
+    final TipoTicketEventoRepository tipoTicketEventoRepository;
+
+
+
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<HashMap<String, Object>> gestionExcepcion(
             HttpServletRequest request) {
@@ -87,6 +105,9 @@ public class EventoController {
         //HTTP 404 BAD REQUEST
         return ResponseEntity.badRequest().body(responseMap);
     }
+
+
+
 
 
 }

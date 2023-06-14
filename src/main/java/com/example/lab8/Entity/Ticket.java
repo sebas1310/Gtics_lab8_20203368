@@ -14,11 +14,11 @@ public class Ticket {
     @Column(name = "id")
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idTipoTicket")
     private TipoTicketEvento tipoTicketEvento;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idUsuario")
     private Usuario usuario;
 

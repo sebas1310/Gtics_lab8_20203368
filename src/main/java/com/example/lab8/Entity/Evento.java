@@ -27,7 +27,7 @@ public class Evento {
     @Column(name = "path_image")
     private String path_image;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idLocal")
     private Local local;
 
